@@ -19,9 +19,9 @@ store_caps = [2000, 3000, 2000]
 
 # Distance Matrix (static)
 distances = np.array([
-    [22, 33, 40],  # D1 to Stores
-    [27, 30, 22],  # D2 to Stores
-    [36, 20, 25],  # D3 to Stores
+    [22, 33, 40],
+    [27, 30, 22],
+    [36, 20, 25],
 ])
 cost_per_mile = 5
 
@@ -37,26 +37,32 @@ with st.form("input_form"):
 if submit:
     depot_supply = [d1_supply, d2_supply, d3_supply]
 
-    # Show user-defined depot table
+    # Show depot supply table (index hidden to match store table)
     depot_df = pd.DataFrame({"Depot": depot_labels, "TVs Available": depot_supply})
-    st.markdown(depot_df.style.set_table_styles([
-        {'selector': 'th', 'props': [('text-align', 'center')]},
-        {'selector': 'td', 'props': [('text-align', 'center')]}
-    ]).to_html(), unsafe_allow_html=True)
+    st.markdown(depot_df.style
+        .set_table_styles([
+            {'selector': 'th', 'props': [('text-align', 'center')]},
+            {'selector': 'td', 'props': [('text-align', 'center')]}
+        ])
+        .hide(axis="index")
+        .to_html(), unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Show static store capacities
+    # Store capacity table
     st.markdown("### 🏬 Store Capacity Constraints")
     store_df = pd.DataFrame({"Store": store_labels, "Capacity": store_caps})
-    st.markdown(store_df.style.set_table_styles([
-        {'selector': 'th', 'props': [('text-align', 'center')]},
-        {'selector': 'td', 'props': [('text-align', 'center')]}
-    ]).to_html(), unsafe_allow_html=True)
+    st.markdown(store_df.style
+        .set_table_styles([
+            {'selector': 'th', 'props': [('text-align', 'center')]},
+            {'selector': 'td', 'props': [('text-align', 'center')]}
+        ])
+        .hide(axis="index")
+        .to_html(), unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Show distance matrix
+    # Distance matrix
     st.markdown("### 🗺️ Distance Matrix (miles)")
     distance_df = pd.DataFrame(distances, index=depot_labels, columns=store_labels)
     st.markdown(distance_df.style.set_table_styles([
@@ -64,10 +70,9 @@ if submit:
         {'selector': 'td', 'props': [('text-align', 'center')]}
     ]).to_html(), unsafe_allow_html=True)
 
-    # Flatten cost vector
+    # Optimization
     c = (distances * cost_per_mile).flatten()
 
-    # Constraints
     A_store = np.zeros((3, 9))
     for j in range(3):
         for i in range(3):
@@ -81,7 +86,6 @@ if submit:
 
     bounds = [(0, None) for _ in range(9)]
 
-    # Solve
     res = linprog(
         c=c,
         A_ub=A_store,
@@ -106,6 +110,5 @@ if submit:
 
         total_cost = res.fun
         st.write(f"### 💰 Total Delivery Cost: £{total_cost:,.2f}")
-
     else:
         st.error("❌ Optimization failed: " + res.message)
