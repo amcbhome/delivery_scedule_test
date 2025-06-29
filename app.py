@@ -46,8 +46,7 @@ if submit:
     )
     ax.set_xlabel("Number of TVs")
     ax.set_title("Depot Supply vs Store Demand")
-    for bar in bars:
-        ax.bar_label(bar, fmt="%.0f", label_type='edge')
+    ax.bar_label(bars, fmt="%.0f", label_type='edge')
     st.pyplot(fig)
 
     # --- Error Handling ---
