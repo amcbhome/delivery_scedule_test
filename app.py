@@ -39,7 +39,7 @@ if submit:
     # --- Chart with reduced height, narrow bars, and external legend ---
     st.markdown("### 📊 Supply vs Demand Overview")
 
-    fig, ax = plt.subplots(figsize=(9, 2.0))  # Reduced height
+    fig, ax = plt.subplots(figsize=(9, 1.5))  # Reduced height
 
     bar_height = 0.15
     supply_bar_y = 0
