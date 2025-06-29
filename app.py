@@ -36,18 +36,18 @@ if submit:
     total_supply = sum(depot_supply)
     total_demand = sum(store_caps)
 
-    # --- Stacked Bar Chart with Narrow Bars and External Legend ---
+    # --- Chart with Narrow Bars, Grid, and External Legend ---
     st.markdown("### 📊 Supply vs Demand Overview")
 
     fig, ax = plt.subplots(figsize=(9, 4))
 
-    bar_height = 0.2
+    bar_height = 0.15
     supply_bar_y = 0
     demand_bar_y = 1
 
     d1, d2, d3 = d1_supply, d2_supply, d3_supply
 
-    # Stacked depot supply bars
+    # Stacked supply bars
     ax.barh(supply_bar_y, d1, height=bar_height, color='skyblue', label='D1 Supply')
     ax.barh(supply_bar_y, d2, height=bar_height, color='limegreen', left=d1, label='D2 Supply')
     ax.barh(supply_bar_y, d3, height=bar_height, color='orange', left=d1 + d2, label='D3 Supply')
@@ -55,12 +55,18 @@ if submit:
     # Store demand bar
     ax.barh(demand_bar_y, total_demand, height=bar_height, color='green', label='Total Store Demand')
 
-    # Chart labels and layout
+    # Gridlines
+    ax.set_xticks(np.arange(0, max(total_supply, total_demand) + 1000, 1000))
+    ax.grid(axis='x', linestyle='--', alpha=0.6)
+
+    # Axis settings
     ax.set_yticks([supply_bar_y, demand_bar_y])
-    ax.set_yticklabels(['Total Depot Supply (stacked)', 'Total Store Demand'])
+    ax.set_yticklabels(['Total Depot Supply', 'Total Store Demand'])
     ax.set_xlabel("Number of TVs")
-    ax.set_title("Depot Supply vs Store Demand (Stacked View)")
+    ax.set_title("Depot Supply vs Store Demand")
     ax.set_xlim(0, max(total_supply, total_demand) * 1.15)
+
+    # External legend
     ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5))
 
     # Value labels
@@ -69,7 +75,7 @@ if submit:
 
     st.pyplot(fig)
 
-    # --- Error Trap with Clean Message ---
+    # --- Error Message if Supply > Demand ---
     if total_supply > total_demand:
         st.error(f"""
         ❌ **Total depot supply ({total_supply}) exceeds store demand ({total_demand}).**  
@@ -77,7 +83,7 @@ if submit:
         """)
         st.stop()
 
-    # --- Depot Supply Table ---
+    # --- Depot Table ---
     depot_df = pd.DataFrame({"Depot": depot_labels, "TVs Available": depot_supply})
     st.markdown(depot_df.style
         .set_table_styles([
