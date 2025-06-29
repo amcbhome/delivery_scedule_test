@@ -36,10 +36,10 @@ if submit:
     total_supply = sum(depot_supply)
     total_demand = sum(store_caps)
 
-    # --- Chart with Narrow Bars, Grid, and External Legend ---
+    # --- Chart with reduced height, narrow bars, and external legend ---
     st.markdown("### 📊 Supply vs Demand Overview")
 
-    fig, ax = plt.subplots(figsize=(9, 4))
+    fig, ax = plt.subplots(figsize=(9, 2.5))  # Reduced height
 
     bar_height = 0.15
     supply_bar_y = 0
@@ -47,35 +47,28 @@ if submit:
 
     d1, d2, d3 = d1_supply, d2_supply, d3_supply
 
-    # Stacked supply bars
     ax.barh(supply_bar_y, d1, height=bar_height, color='skyblue', label='D1 Supply')
     ax.barh(supply_bar_y, d2, height=bar_height, color='limegreen', left=d1, label='D2 Supply')
     ax.barh(supply_bar_y, d3, height=bar_height, color='orange', left=d1 + d2, label='D3 Supply')
 
-    # Store demand bar
     ax.barh(demand_bar_y, total_demand, height=bar_height, color='green', label='Total Store Demand')
 
-    # Gridlines
     ax.set_xticks(np.arange(0, max(total_supply, total_demand) + 1000, 1000))
     ax.grid(axis='x', linestyle='--', alpha=0.6)
 
-    # Axis settings
     ax.set_yticks([supply_bar_y, demand_bar_y])
     ax.set_yticklabels(['Total Depot Supply', 'Total Store Demand'])
     ax.set_xlabel("Number of TVs")
     ax.set_title("Depot Supply vs Store Demand")
     ax.set_xlim(0, max(total_supply, total_demand) * 1.15)
 
-    # External legend
     ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5))
 
-    # Value labels
     ax.text(total_supply + 50, supply_bar_y, str(total_supply), va='center')
     ax.text(total_demand + 50, demand_bar_y, str(total_demand), va='center')
 
     st.pyplot(fig)
 
-    # --- Error Message if Supply > Demand ---
     if total_supply > total_demand:
         st.error(f"""
         ❌ **Total depot supply ({total_supply}) exceeds store demand ({total_demand}).**  
@@ -83,7 +76,6 @@ if submit:
         """)
         st.stop()
 
-    # --- Depot Table ---
     depot_df = pd.DataFrame({"Depot": depot_labels, "TVs Available": depot_supply})
     st.markdown(depot_df.style
         .set_table_styles([
@@ -93,7 +85,6 @@ if submit:
         .hide(axis="index")
         .to_html(), unsafe_allow_html=True)
 
-    # --- Store Capacity Table ---
     store_df = pd.DataFrame({"Store": store_labels, "Capacity": store_caps})
     st.markdown("### 🏬 Store Capacity Constraints")
     st.markdown(store_df.style
@@ -104,7 +95,6 @@ if submit:
         .hide(axis="index")
         .to_html(), unsafe_allow_html=True)
 
-    # --- Distance Matrix ---
     st.markdown("### 🗺️ Distance Matrix (miles)")
     distance_df = pd.DataFrame(distances, index=depot_labels, columns=store_labels)
     st.markdown(distance_df.style.set_table_styles([
@@ -112,7 +102,6 @@ if submit:
         {'selector': 'td', 'props': [('text-align', 'center')]},
     ]).to_html(), unsafe_allow_html=True)
 
-    # --- Optimization ---
     c = (distances * cost_per_mile).flatten()
 
     A_store = np.zeros((3, 9))
@@ -154,3 +143,4 @@ if submit:
         st.write(f"### 💰 Total Delivery Cost: £{total_cost:,.2f}")
     else:
         st.error("❌ Optimization failed: " + res.message)
+
