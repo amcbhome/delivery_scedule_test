@@ -10,7 +10,7 @@ st.markdown("""
 **A company wishes to minimise its costs of delivering televisions from three depots (D1, D2 and D3) to three stores (Store 1, Store 2, and Store 3). The cost of delivering one TV is £5 per mile. [Source](https://www.accaglobal.com/uk/en/student/exam-support-resources/professional-exams-study-resources/strategic-business-leader/technical-articles/big-data-sbl.html)**
 """)
 
-st.markdown("## Problem Setup")
+# st.markdown("## Problem Setup")
 
 depot_labels = ["D1", "D2", "D3"]
 store_labels = ["Store 1", "Store 2", "Store 3"]
