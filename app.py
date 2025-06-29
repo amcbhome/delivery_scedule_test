@@ -36,7 +36,7 @@ if submit:
     total_supply = sum(depot_supply)
     total_demand = sum(store_caps)
 
-    # --- Stacked Matplotlib Chart with External Legend ---
+    # --- Stacked Bar Chart with Narrow Bars and External Legend ---
     st.markdown("### 📊 Supply vs Demand Overview")
 
     fig, ax = plt.subplots(figsize=(9, 4))
@@ -47,34 +47,20 @@ if submit:
 
     d1, d2, d3 = d1_supply, d2_supply, d3_supply
 
-    # Stacked depot supply
+    # Stacked depot supply bars
     ax.barh(supply_bar_y, d1, height=bar_height, color='skyblue', label='D1 Supply')
     ax.barh(supply_bar_y, d2, height=bar_height, color='limegreen', left=d1, label='D2 Supply')
     ax.barh(supply_bar_y, d3, height=bar_height, color='orange', left=d1 + d2, label='D3 Supply')
 
-    # Overlay for excess supply
-    if total_supply > total_demand:
-        ax.barh(
-            supply_bar_y,
-            total_supply - total_demand,
-            left=total_demand,
-            height=bar_height,
-            color='red',
-            hatch='///',
-            label='Excess Supply'
-        )
-
-    # Demand bar
+    # Store demand bar
     ax.barh(demand_bar_y, total_demand, height=bar_height, color='green', label='Total Store Demand')
 
-    # Axis setup
+    # Chart labels and layout
     ax.set_yticks([supply_bar_y, demand_bar_y])
     ax.set_yticklabels(['Total Depot Supply (stacked)', 'Total Store Demand'])
     ax.set_xlabel("Number of TVs")
     ax.set_title("Depot Supply vs Store Demand (Stacked View)")
     ax.set_xlim(0, max(total_supply, total_demand) * 1.15)
-
-    # Legend outside to the right
     ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5))
 
     # Value labels
@@ -83,16 +69,15 @@ if submit:
 
     st.pyplot(fig)
 
-    # --- Error Trap ---
+    # --- Error Trap with Clean Message ---
     if total_supply > total_demand:
         st.error(f"""
-        ❌ Total depot supply (**{total_supply}**) exceeds store demand (**{total_demand}**).
-        The red hatched section shows the excess supply.
-        Please adjust depot inputs accordingly.
+        ❌ **Total depot supply ({total_supply}) exceeds store demand ({total_demand}).**  
+        Please adjust depot inputs accordingly to avoid over-delivery.
         """)
         st.stop()
 
-    # --- Depot Table ---
+    # --- Depot Supply Table ---
     depot_df = pd.DataFrame({"Depot": depot_labels, "TVs Available": depot_supply})
     st.markdown(depot_df.style
         .set_table_styles([
@@ -102,7 +87,7 @@ if submit:
         .hide(axis="index")
         .to_html(), unsafe_allow_html=True)
 
-    # --- Store Table ---
+    # --- Store Capacity Table ---
     store_df = pd.DataFrame({"Store": store_labels, "Capacity": store_caps})
     st.markdown("### 🏬 Store Capacity Constraints")
     st.markdown(store_df.style
