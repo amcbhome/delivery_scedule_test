@@ -36,16 +36,26 @@ if submit:
     total_supply = sum(depot_supply)
     total_demand = sum(store_caps)
 
-    # Bar chart
+    # --- Horizontal Bar Chart with Matplotlib ---
     st.markdown("### 📊 Supply vs Demand Overview")
-    chart_df = pd.DataFrame({
-        "TVs": [total_demand, d1_supply, d2_supply, d3_supply]
-    }, index=["Total Store Demand", "D1 Supply", "D2 Supply", "D3 Supply"])
-    st.bar_chart(chart_df)
+    fig, ax = plt.subplots()
+    bars = ax.barh(
+        ["Depot Supply (D1+D2+D3)", "Total Store Demand"],
+        [total_supply, total_demand],
+        color=["blue", "green"]
+    )
+    ax.set_xlabel("Number of TVs")
+    ax.set_title("Depot Supply vs Store Demand")
+    for bar in bars:
+        ax.bar_label(bar, fmt="%.0f", label_type='edge')
+    st.pyplot(fig)
 
-    # Error trapping
+    # --- Error Handling ---
     if total_supply > total_demand:
-        st.error(f"❌ Total supply ({total_supply}) exceeds total demand ({total_demand}). Please adjust depot inputs.")
+        st.error(f"""
+        ❌ The total number of TVs available from depots (**{total_supply}**) exceeds the total store demand (**{total_demand}**).
+        Please reduce the supply from one or more depots to proceed.
+        """)
         st.stop()
 
     # Display depot supply table
