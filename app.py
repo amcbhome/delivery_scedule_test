@@ -41,7 +41,7 @@ if submit:
 
     fig, ax = plt.subplots(figsize=(9, 1.5))  # Reduced height
 
-    bar_height = 0.15
+    bar_height = 0.5
     supply_bar_y = 0
     demand_bar_y = 1
 
