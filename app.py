@@ -12,12 +12,10 @@ st.markdown("""
 
 st.markdown("## Problem Setup")
 
-# Static store labels and capacity
 depot_labels = ["D1", "D2", "D3"]
 store_labels = ["Store 1", "Store 2", "Store 3"]
 store_caps = [2000, 3000, 2000]
 
-# Distance Matrix (static)
 distances = np.array([
     [22, 33, 40],
     [27, 30, 22],
@@ -25,7 +23,6 @@ distances = np.array([
 ])
 cost_per_mile = 5
 
-# --- User Input Section ---
 st.markdown("### 📦 TVs Available at Each Depot")
 
 with st.form("input_form"):
@@ -36,79 +33,91 @@ with st.form("input_form"):
 
 if submit:
     depot_supply = [d1_supply, d2_supply, d3_supply]
+    total_supply = sum(depot_supply)
+    total_demand = sum(store_caps)
 
-    # Show depot supply table (index hidden to match store table)
-    depot_df = pd.DataFrame({"Depot": depot_labels, "TVs Available": depot_supply})
-    st.markdown(depot_df.style
-        .set_table_styles([
+    # Bar chart
+    st.markdown("### 📊 Supply vs Demand Overview")
+    chart_df = pd.DataFrame({
+        "TVs": [total_demand, d1_supply, d2_supply, d3_supply]
+    }, index=["Total Store Demand", "D1 Supply", "D2 Supply", "D3 Supply"])
+    
+    st.bar_chart(chart_df)
+
+    if total_supply > total_demand:
+        st.error(f"❌ Total supply ({total_supply}) exceeds total demand ({total_demand}). Please adjust depot inputs.")
+    else:
+        # Display depot supply table
+        depot_df = pd.DataFrame({"Depot": depot_labels, "TVs Available": depot_supply})
+        st.markdown(depot_df.style
+            .set_table_styles([
+                {'selector': 'th', 'props': [('text-align', 'center')]},
+                {'selector': 'td', 'props': [('text-align', 'center')]},
+            ])
+            .hide(axis="index")
+            .to_html(), unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Store table
+        store_df = pd.DataFrame({"Store": store_labels, "Capacity": store_caps})
+        st.markdown("### 🏬 Store Capacity Constraints")
+        st.markdown(store_df.style
+            .set_table_styles([
+                {'selector': 'th', 'props': [('text-align', 'center')]},
+                {'selector': 'td', 'props': [('text-align', 'center')]},
+            ])
+            .hide(axis="index")
+            .to_html(), unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown("### 🗺️ Distance Matrix (miles)")
+        distance_df = pd.DataFrame(distances, index=depot_labels, columns=store_labels)
+        st.markdown(distance_df.style.set_table_styles([
             {'selector': 'th', 'props': [('text-align', 'center')]},
-            {'selector': 'td', 'props': [('text-align', 'center')]}
-        ])
-        .hide(axis="index")
-        .to_html(), unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Store capacity table
-    st.markdown("### 🏬 Store Capacity Constraints")
-    store_df = pd.DataFrame({"Store": store_labels, "Capacity": store_caps})
-    st.markdown(store_df.style
-        .set_table_styles([
-            {'selector': 'th', 'props': [('text-align', 'center')]},
-            {'selector': 'td', 'props': [('text-align', 'center')]}
-        ])
-        .hide(axis="index")
-        .to_html(), unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Distance matrix
-    st.markdown("### 🗺️ Distance Matrix (miles)")
-    distance_df = pd.DataFrame(distances, index=depot_labels, columns=store_labels)
-    st.markdown(distance_df.style.set_table_styles([
-        {'selector': 'th', 'props': [('text-align', 'center')]},
-        {'selector': 'td', 'props': [('text-align', 'center')]}
-    ]).to_html(), unsafe_allow_html=True)
-
-    # Optimization
-    c = (distances * cost_per_mile).flatten()
-
-    A_store = np.zeros((3, 9))
-    for j in range(3):
-        for i in range(3):
-            A_store[j, 3*i + j] = 1
-    b_store = store_caps
-
-    A_depot = np.zeros((3, 9))
-    for i in range(3):
-        A_depot[i, 3*i : 3*i+3] = 1
-    b_depot = depot_supply
-
-    bounds = [(0, None) for _ in range(9)]
-
-    res = linprog(
-        c=c,
-        A_ub=A_store,
-        b_ub=b_store,
-        A_eq=A_depot,
-        b_eq=b_depot,
-        bounds=bounds,
-        method="highs"
-    )
-
-    st.markdown("## Optimization Results")
-
-    if res.success:
-        x = np.round(res.x).astype(int).reshape(3, 3)
-        shipment_df = pd.DataFrame(x, index=depot_labels, columns=store_labels)
-
-        st.markdown("### ✅ Optimized TV Shipment Plan")
-        st.markdown(shipment_df.style.set_table_styles([
-            {'selector': 'th', 'props': [('text-align', 'center')]},
-            {'selector': 'td', 'props': [('text-align', 'center')]}
+            {'selector': 'td', 'props': [('text-align', 'center')]},
         ]).to_html(), unsafe_allow_html=True)
 
-        total_cost = res.fun
-        st.write(f"### 💰 Total Delivery Cost: £{total_cost:,.2f}")
-    else:
-        st.error("❌ Optimization failed: " + res.message)
+        # Optimization
+        c = (distances * cost_per_mile).flatten()
+
+        A_store = np.zeros((3, 9))
+        for j in range(3):
+            for i in range(3):
+                A_store[j, 3*i + j] = 1
+        b_store = store_caps
+
+        A_depot = np.zeros((3, 9))
+        for i in range(3):
+            A_depot[i, 3*i : 3*i+3] = 1
+        b_depot = depot_supply
+
+        bounds = [(0, None) for _ in range(9)]
+
+        res = linprog(
+            c=c,
+            A_ub=A_store,
+            b_ub=b_store,
+            A_eq=A_depot,
+            b_eq=b_depot,
+            bounds=bounds,
+            method="highs"
+        )
+
+        st.markdown("## Optimization Results")
+
+        if res.success:
+            x = np.round(res.x).astype(int).reshape(3, 3)
+            shipment_df = pd.DataFrame(x, index=depot_labels, columns=store_labels)
+
+            st.markdown("### ✅ Optimized TV Shipment Plan")
+            st.markdown(shipment_df.style.set_table_styles([
+                {'selector': 'th', 'props': [('text-align', 'center')]},
+                {'selector': 'td', 'props': [('text-align', 'center')]},
+            ]).to_html(), unsafe_allow_html=True)
+
+            total_cost = res.fun
+            st.write(f"### 💰 Total Delivery Cost: £{total_cost:,.2f}")
+        else:
+            st.error("❌ Optimization failed: " + res.message)
