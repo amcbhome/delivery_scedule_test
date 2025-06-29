@@ -36,12 +36,12 @@ if submit:
     total_supply = sum(depot_supply)
     total_demand = sum(store_caps)
 
-    # --- Stacked Matplotlib Chart ---
+    # --- Stacked Matplotlib Chart with External Legend ---
     st.markdown("### 📊 Supply vs Demand Overview")
 
-    fig, ax = plt.subplots(figsize=(8, 4))
+    fig, ax = plt.subplots(figsize=(9, 4))
 
-    bar_height = 0.4
+    bar_height = 0.2
     supply_bar_y = 0
     demand_bar_y = 1
 
@@ -52,7 +52,7 @@ if submit:
     ax.barh(supply_bar_y, d2, height=bar_height, color='limegreen', left=d1, label='D2 Supply')
     ax.barh(supply_bar_y, d3, height=bar_height, color='orange', left=d1 + d2, label='D3 Supply')
 
-    # Red hatched overlay for excess
+    # Overlay for excess supply
     if total_supply > total_demand:
         ax.barh(
             supply_bar_y,
@@ -64,16 +64,18 @@ if submit:
             label='Excess Supply'
         )
 
-    # Total store demand bar
+    # Demand bar
     ax.barh(demand_bar_y, total_demand, height=bar_height, color='green', label='Total Store Demand')
 
-    # Axis & labels
+    # Axis setup
     ax.set_yticks([supply_bar_y, demand_bar_y])
     ax.set_yticklabels(['Total Depot Supply (stacked)', 'Total Store Demand'])
     ax.set_xlabel("Number of TVs")
     ax.set_title("Depot Supply vs Store Demand (Stacked View)")
-    ax.set_xlim(0, max(total_supply, total_demand) * 1.1)
-    ax.legend(loc='lower right')
+    ax.set_xlim(0, max(total_supply, total_demand) * 1.15)
+
+    # Legend outside to the right
+    ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5))
 
     # Value labels
     ax.text(total_supply + 50, supply_bar_y, str(total_supply), va='center')
@@ -85,8 +87,8 @@ if submit:
     if total_supply > total_demand:
         st.error(f"""
         ❌ Total depot supply (**{total_supply}**) exceeds store demand (**{total_demand}**).
-        The red hatched area shows the excess.
-        Please reduce depot inputs accordingly.
+        The red hatched section shows the excess supply.
+        Please adjust depot inputs accordingly.
         """)
         st.stop()
 
