@@ -36,31 +36,26 @@ if submit:
     total_supply = sum(depot_supply)
     total_demand = sum(store_caps)
 
-    # --- Matplotlib Horizontal Bar Chart with Breakdown ---
+    # --- Stacked Matplotlib Chart ---
     st.markdown("### 📊 Supply vs Demand Overview")
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 4))
 
-    bar_height = 0.25
-    y_positions = np.arange(3)
+    bar_height = 0.4
+    supply_bar_y = 0
+    demand_bar_y = 1
 
-    # Individual depot bars
-    ax.barh(y_positions[0], d1_supply, height=bar_height, color='skyblue', label='D1 Supply')
-    ax.barh(y_positions[1], d2_supply, height=bar_height, color='limegreen', label='D2 Supply')
-    ax.barh(y_positions[2], d3_supply, height=bar_height, color='orange', label='D3 Supply')
+    d1, d2, d3 = d1_supply, d2_supply, d3_supply
 
-    # Total supply bar
-    total_bar_y = 3.5
-    ax.barh(total_bar_y, total_supply, height=bar_height, color='blue', label='Total Depot Supply')
+    # Stacked depot supply
+    ax.barh(supply_bar_y, d1, height=bar_height, color='skyblue', label='D1 Supply')
+    ax.barh(supply_bar_y, d2, height=bar_height, color='limegreen', left=d1, label='D2 Supply')
+    ax.barh(supply_bar_y, d3, height=bar_height, color='orange', left=d1 + d2, label='D3 Supply')
 
-    # Store demand bar
-    demand_bar_y = 4.5
-    ax.barh(demand_bar_y, total_demand, height=bar_height, color='green', label='Total Store Demand')
-
-    # Red hatched overlay for excess supply
+    # Red hatched overlay for excess
     if total_supply > total_demand:
         ax.barh(
-            total_bar_y,
+            supply_bar_y,
             total_supply - total_demand,
             left=total_demand,
             height=bar_height,
@@ -69,19 +64,19 @@ if submit:
             label='Excess Supply'
         )
 
-    # Y-axis labels
-    ax.set_yticks([0, 1, 2, total_bar_y, demand_bar_y])
-    ax.set_yticklabels(['Depot D1', 'Depot D2', 'Depot D3', 'Total Supply', 'Total Demand'])
+    # Total store demand bar
+    ax.barh(demand_bar_y, total_demand, height=bar_height, color='green', label='Total Store Demand')
 
+    # Axis & labels
+    ax.set_yticks([supply_bar_y, demand_bar_y])
+    ax.set_yticklabels(['Total Depot Supply (stacked)', 'Total Store Demand'])
     ax.set_xlabel("Number of TVs")
-    ax.set_title("Depot Supply vs Store Demand")
-    ax.legend(loc='lower right')
+    ax.set_title("Depot Supply vs Store Demand (Stacked View)")
     ax.set_xlim(0, max(total_supply, total_demand) * 1.1)
+    ax.legend(loc='lower right')
 
     # Value labels
-    for y, val in zip([0, 1, 2], depot_supply):
-        ax.text(val + 50, y, str(val), va='center')
-    ax.text(total_supply + 50, total_bar_y, str(total_supply), va='center')
+    ax.text(total_supply + 50, supply_bar_y, str(total_supply), va='center')
     ax.text(total_demand + 50, demand_bar_y, str(total_demand), va='center')
 
     st.pyplot(fig)
@@ -89,8 +84,8 @@ if submit:
     # --- Error Trap ---
     if total_supply > total_demand:
         st.error(f"""
-        ❌ The total number of TVs available from depots (**{total_supply}**) exceeds the total store demand (**{total_demand}**).
-        The red hatched section in the chart indicates the excess supply.
+        ❌ Total depot supply (**{total_supply}**) exceeds store demand (**{total_demand}**).
+        The red hatched area shows the excess.
         Please reduce depot inputs accordingly.
         """)
         st.stop()
@@ -116,6 +111,7 @@ if submit:
         .hide(axis="index")
         .to_html(), unsafe_allow_html=True)
 
+    # --- Distance Matrix ---
     st.markdown("### 🗺️ Distance Matrix (miles)")
     distance_df = pd.DataFrame(distances, index=depot_labels, columns=store_labels)
     st.markdown(distance_df.style.set_table_styles([
