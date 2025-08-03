@@ -12,6 +12,9 @@ st.markdown("""
 **The objective is to minimise the delivery cost by optimising the schedule, considering constraints in distance and storage capacity.**
 
 **Delivery costs are £5 per mile, per TV.**
+
+st.markdown("Here is a link to the ACCA article on Big Data: [Big Data - SBL](https://www.accaglobal.com/uk/en/student/exam-support-resources/professional-exams-study-resources/strategic-business-leader/technical-articles/big-data-sbl.html)")
+
 """)
 
 # Labels and Data
