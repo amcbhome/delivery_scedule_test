@@ -13,7 +13,7 @@ st.markdown("""
 
 **Delivery costs are £5 per mile, per TV.**
 
-("[Big Data - SBL](https://www.accaglobal.com/uk/en/student/exam-support-resources/professional-exams-study-resources/strategic-business-leader/technical-articles/big-data-sbl.html)")
+[ACCA](https://www.accaglobal.com/uk/en/student/exam-support-resources/professional-exams-study-resources/strategic-business-leader/technical-articles/big-data-sbl.html)
 
 """)
 
