@@ -10,6 +10,8 @@ st.markdown("""
 **This example of prescriptive analytics solves a linear program with Python code, creating a data model to automate the calculation.**
 
 **The objective is to minimise the delivery cost by optimising the schedule, considering constraints in distance and storage capacity.**
+
+**Delivery costs are £5 per mile, per TV.**
 """)
 
 # Labels and Data
