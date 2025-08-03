@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 st.title("TV Delivery Optimizer")
 
 st.markdown("""
-**This example of prescriptive analytics solves a linear program with python code, creating a data model as a basis for automation.**
+**This example of prescriptive analytics solves a linear program with python code, creating a data model to automate the calculation.**
+
 **The objective is to minimise the delivery cost by   optimising the schedule, considering constraints in distance and storage capacity.**
 """)
 
