@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 st.title("TV Delivery Optimizer")
 
 st.markdown("""
-**This example of prescriptive analytics solves a linear programming problem with python code, creating a data model as a basis for automation.**  
+**This example of prescriptive analytics solves a linear program problem with python code, creating a data model as a basis for automation.**  
 """)
 
 # Labels and Data
@@ -23,7 +23,7 @@ distances = np.array([
 cost_per_mile = 5
 
 # --- Input + Matrix in Columns ---
-st.markdown("### 📦 TVs Available at Each Depot")
+st.markdown("### 📦 TVs at Each Depot")
 
 col1, col2 = st.columns([2, 1])
 
