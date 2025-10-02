@@ -18,7 +18,7 @@ distances = np.array([
 cost_per_mile = 5
 
 # --- Input Section ---
-st.markdown("## Input the quantity to be delivered:")
+st.markdown("Input the quantity to be delivered:")
 
 col1, col2 = st.columns([2, 1])
 
@@ -30,7 +30,7 @@ with col1:
         submit = st.form_submit_button("Calculate")
 
 with col2:
-    st.markdown("## Distance from depots to stores")
+    st.markdown("Distance from depots to stores")
     distance_df = pd.DataFrame(distances, index=depot_labels, columns=store_labels)
     st.dataframe(distance_df.style.format(precision=0), use_container_width=True)
 
