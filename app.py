@@ -5,9 +5,6 @@ from scipy.optimize import linprog
 
 st.title("TV Delivery Optimizer")
 
-st.markdown("""
-
-
 # Labels and Data
 depot_labels = ["D1", "D2", "D3"]
 store_labels = ["Store 1", "Store 2", "Store 3"]
