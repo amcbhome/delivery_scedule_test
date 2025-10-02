@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -46,7 +45,7 @@ if submit:
 
     if total_supply > total_demand:
         st.error(f"""
-        ❌ **Total depot supply ({total_supply}) exceeds store demand ({total_demand}).**  
+        **Total depot supply ({total_supply}) exceeds store demand ({total_demand}).**  
         Please adjust depot inputs accordingly to avoid over-delivery.
         """)
         st.stop()
@@ -86,7 +85,7 @@ if submit:
 
         # Constraint validation
         if any(store_delivery > store_caps):
-            st.error("❌ Input values are not within scope: at least one store is oversupplied.")
+            st.error("Input values are not within scope: at least one store is oversupplied.")
             st.stop()
 
         # --- Optimised Schedule Section ---
@@ -111,4 +110,4 @@ if submit:
         total_cost = int(res.fun)
         st.write(f"### 💰 Total Delivery Cost: £{total_cost:,}")
     else:
-        st.error("❌ Optimization failed: " + res.message)
+        st.error("Optimization failed: " + res.message)
