@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import linprog
 
-st.title("Delivery Calculator")
+st.title("Delivery Optimisation")
 
 # Labels and Data
 depot_labels = ["D1", "D2", "D3"]
