@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import linprog
 
-st.title("TV Delivery Optimizer")
+st.title("Delivery Calculator")
 
 # Labels and Data
 depot_labels = ["D1", "D2", "D3"]
