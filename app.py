@@ -3,7 +3,26 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import linprog
 
+import streamlit.components.v1 as components
+
+
 st.title("Delivery Optimisation")
+
+GA_MEASUREMENT_ID = "13361729112"
+
+ga_script = f"""
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GA_MEASUREMENT_ID}');
+</script>
+"""
+
+components.html(ga_script, height=0)
+
 
 # Labels and Data
 depot_labels = ["D1", "D2", "D3"]
